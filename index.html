@@ -9,7 +9,15 @@
     hola mundo desde python 
     <input type="text" name="" id="">
     <script>
-        document.addEventListener(D)
+       document.addEventListener('DOMContentLoaded',(e)=>{
+            txtNombre.addEventListener('keyup', e=>{
+                fetch('http://localhost:3000/', {
+                    'method': 'POST',
+                    body: txtNombre.value
+                }).then(resp=>resp.text())
+                .then(data=>console.log(data));
+            });
+        });
     </script>
 </body>
-</html>
+</html> 
