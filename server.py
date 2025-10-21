@@ -1,32 +1,30 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib import parse
+import json 
+import crud_alumno
 
-class Servidor(BaseHTTPRequestHandler):
+port = 3000
+
+crudAlumno = crud_alumno.crud_alumno()
+
+class miServidor(SimpleHTTPRequestHandler):
     def do_GET(self):
-        ruta = self.path if self.path != "/" else "/index.html"
-        try:
-            with open("." + ruta, "rb") as archivo:
-                self.send_response(200)
-                self.send_header("Content-Type", "text/html")
-                self.end_headers()
-                self.wfile.write(archivo.read())
-        except FileNotFoundError:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b"404 - No encontrado")
-
+        if self.path=="/":
+            self.path="index.html"
+            return SimpleHTTPRequestHandler.do_GET(self)
+    
     def do_POST(self):
         longitud = int(self.headers['Content-Length'])
-        datos = self.rfile.read(longitud).decode("utf-8")
+        datos = self.rfile.read(longitud)
+        datos = datos.decode("utf-8")
         datos = parse.unquote(datos)
-
-        print(f"Datos recibidos: {datos}")
-
+        datos = json.loads(datos)
+        resp = {"msg": crudAlumno.administrar(datos)}
+        
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(datos.encode("utf-8"))
+        self.wfile.write(json.dumps(resp).encode("utf-8"))
 
-if __name__ == "__main__":
-    puerto = 3000
-    print(f"Servidor ejecutándose en el puerto {puerto}")
-    HTTPServer(("localhost", puerto), Servidor).serve_forever()
+print("Servidor ejecutandose en el puerto", port)
+server = HTTPServer(("localhost", port), miServidor)
+server.serve_forever()
