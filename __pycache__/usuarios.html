@@ -1,0 +1,38 @@
+<!-- usuarios.html -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Usuarios - Sistema Académico</title>
+</head>
+<body>
+  <h2>Administración de Usuarios</h2>
+  <div>
+    <button id="btnLogout">Cerrar sesión</button>
+  </div>
+
+  <h3>Registrar / Editar Usuario</h3>
+  <form id="formUsuario">
+    <input type="hidden" id="idUsuario" value="">
+    <label>Usuario: <input type="text" id="usuario" required></label><br>
+    <label>Clave: <input type="password" id="clave"></label> (dejar vacío si no cambia)<br>
+    <label>Nombre: <input type="text" id="nombre"></label><br>
+    <label>Dirección: <input type="text" id="direccion"></label><br>
+    <label>Teléfono: <input type="text" id="telefono"></label><br>
+    <button type="submit">Guardar</button>
+    <button type="button" id="btnReset">Nuevo</button>
+  </form>
+
+  <h3>Buscar</h3>
+  <input type="text" id="buscar" placeholder="por usuario o nombre">
+  <button id="btnBuscar">Buscar</button>
+
+  <h3>Lista de Usuarios</h3>
+  <table border="1" id="tablaUsuarios">
+    <thead><tr><th>ID</th><th>Usuario</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="usuarios.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<form id="frmUsuarios">
+    <div class="card text-bg-dark" style="min-width: 700px;">
+        <div class="card-header">
+            <div class="d-flex">
+                ADMINISTRACIÓN DE USUARIOS
+                <div class="ms-auto">
+                    <button data-form="usuarios" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row p-1">
+                <div class="col-3 col-md-2">ID</div>
+                <div class="col-9 col-md-3">
+                    <input readonly type="number" id="txtIdUsuario" name="txtIdUsuario" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">USUARIO</div>
+                <div class="col-9 col-md-4">
+                    <input required type="text" id="txtUsuario" name="txtUsuario" maxlength="35" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">CLAVE</div>
+                <div class="col-9 col-md-4">
+                    <input type="password" id="txtClave" name="txtClave" maxlength="35" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">NOMBRE</div>
+                <div class="col-9 col-md-8">
+                    <input required type="text" id="txtNombreUsuario" name="txtNombreUsuario" maxlength="85" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">DIRECCIÓN</div>
+                <div class="col-9 col-md-8">
+                    <input required type="text" id="txtDireccionUsuario" name="txtDireccionUsuario" maxlength="100" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row p-1">
+                <div class="col-3 col-md-2">TELÉFONO</div>
+                <div class="col-9 col-md-3">
+                    <input type="text" id="txtTelefonoUsuario" name="txtTelefonoUsuario" maxlength="9" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <input type="submit" id="btnGuardarUsuario" name="btnGuardarUsuario" class="btn btn-primary" value="GUARDAR" />
+            <input type="reset" id="btnNuevoUsuario" name="btnNuevoUsuario" class="btn btn-warning" value="NUEVO" />
+            <input type="button" id="btnBuscarUsuario" name="btnBuscarUsuario" class="btn btn-info" value="BUSCAR" />
+        </div>
+    </div>
+</form>
+
+<script>
+    var accion = "nuevo",
+        idUsuario = 0;
+    
+    frmUsuarios.addEventListener("submit", e => {
+        e.preventDefault();
+        guardarUsuarios();
+    });
+
+    async function guardarUsuarios() {
+        let datos = {
+            accion,
+            idUsuario,
+            usuario: txtUsuario.value,
+            clave: txtClave.value,
+            nombre: txtNombreUsuario.value,
+            direccion: txtDireccionUsuario.value,
+            telefono: txtTelefonoUsuario.value
+        };
+
+        let response = await fetch("/usuarios", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(datos)
+        });
+
+        let respuesta = await response.json();
+
+        if (!respuesta.ok && respuesta.msg !== "ok") {
+            alertify.error(`Error al procesar usuario: ${respuesta.msg || respuesta}`);
+            return;
+        }
+
+        alertify.success("Usuario guardado correctamente");
+        limpiarFormulario();
+        obtenerUsuarios(); // esta función la puedes definir para refrescar la lista de usuarios
+    }
+
+    function limpiarFormulario() {
+        accion = "nuevo";
+        idUsuario = 0;
+        txtIdUsuario.value = "";
+        txtUsuario.value = "";
+        txtClave.value = "";
+        txtNombreUsuario.value = "";
+        txtDireccionUsuario.value = "";
+        txtTelefonoUsuario.value = "";
+    }
+
+    function mostrarUsuario(usuario) {
+        accion = "modificar";
+        idUsuario = usuario.idUsuario;
+        txtIdUsuario.value = usuario.idUsuario;
+        txtUsuario.value = usuario.usuario;
+        txtClave.value = ""; // no mostramos la clave
+        txtNombreUsuario.value = usuario.nombre;
+        txtDireccionUsuario.value = usuario.direccion;
+        txtTelefonoUsuario.value = usuario.telefono;
+    }
+
+    btnBuscarUsuario.addEventListener("click", e => {
+        e.preventDefault();
+        abrirVentana('busqueda_usuarios');
+    });
+</script>
